@@ -1,6 +1,9 @@
 import time
 import sys
 import threading
+import timeit
+
+
 class TaskQueue:
     def __init__(self):
         """
@@ -13,6 +16,16 @@ class TaskQueue:
         self.current_task = None
         self.previous_task = None
         self.next_task = None
+
+    @staticmethod
+    def queue_timer(func):
+        def wrapper(*args, **kwargs):
+            start_time = timeit.default_timer()
+            result = func(*args, **kwargs)
+            end_time = timeit.default_timer()
+            print(f"{func.__name__} executed in {end_time - start_time:.6f} seconds")
+            return result
+        return wrapper
 
     def add_task(self, task, priority=0, interval=None):
         """
@@ -95,7 +108,6 @@ class TaskQueue:
         print(f"Previous task: {self.previous_task.__name__ if self.previous_task else None}")
         print(f"Next task: {self.next_task.__name__ if self.next_task else None}")
         print(f"Tasks: {', '.join([task.__name__ for _, task, _, _ in self.tasks])}\n")
-
 
     def run(self):
         """
